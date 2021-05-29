@@ -43,6 +43,7 @@ const KEY_MEDIA_NEXT_TRACK = 5;
 const KEY_BROWSER_BACK = 6;
 const KEY_BROWSER_FORWARD = 7;
 const KEY_SUPER = 8;
+const INPUT_BACKFILL_LENGTH = 500;
 
 let ws;
 let pad;
@@ -60,6 +61,7 @@ let scrollYSum = 0;
 let dragging = false;
 let draggingTimeout = null;
 let scrolling = false;
+let prevText = ""
 
 function fullscreenEnabled() {
     return (document.fullscreenEnabled ||
@@ -342,7 +344,8 @@ window.addEventListener("load", function() {
         }
     }
 
-    text.value = "";
+    text.value = "\u200B".repeat(INPUT_BACKFILL_LENGTH);
+    prevText = text.value;
     showScene(opening);
 
     ws = new WebSocket(
@@ -398,6 +401,14 @@ window.addEventListener("load", function() {
             ws.send("k" + o.key);
         });
     });
+    text.addEventListener('input', function(e) {
+        if (text.value.length < prevText.length) {
+            ws.send("t\b");
+        } else if (text.value.length > prevText.length) {
+            ws.send("t" + text.value.slice(prevText.length - text.value.length));
+        }
+        prevText = text.value;
+    })
     document.getElementById("sendbutton").addEventListener("click", function() {
         if (text.value != "") {
             ws.send("t" + text.value);
