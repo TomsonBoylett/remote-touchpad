@@ -44,6 +44,9 @@ const (
 	vkMediaPrevTrack uint16 = 0xB1
 	vkMediaPlayPause uint16 = 0xB3
 
+	vkBackspace uint16 = 0x08
+	vkEnter     uint16 = 0x0D
+
 	mouseeventfMove       uint32 = 0x1
 	mouseeventfLeftdown   uint32 = 0x2
 	mouseeventfLeftup     uint32 = 0x4
@@ -140,6 +143,10 @@ func (p *windowsBackend) KeyboardKey(key Key) error {
 		input.wVk = vkMediaPrevTrack
 	} else if key == KeyMediaPlayPause {
 		input.wVk = vkMediaPlayPause
+	} else if key == KeyEnter {
+		input.wVk = vkEnter
+	} else if key == KeyBackspace {
+		input.wVk = vkBackspace
 	} else {
 		return errors.New("key not mapped to virtual-key code")
 	}

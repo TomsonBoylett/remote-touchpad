@@ -43,6 +43,9 @@ const KEY_MEDIA_NEXT_TRACK = 5;
 const KEY_BROWSER_BACK = 6;
 const KEY_BROWSER_FORWARD = 7;
 const KEY_SUPER = 8;
+const KEY_ENTER = 9;
+const KEY_BACKSPACE = 10;
+
 const INPUT_BACKFILL_LENGTH = 500;
 
 let ws;
@@ -401,11 +404,21 @@ window.addEventListener("load", function() {
             ws.send("k" + o.key);
         });
     });
-    text.addEventListener('input', function(e) {
+    text.addEventListener("input", function(e) {
         if (text.value.length < prevText.length) {
-            ws.send("t\b");
+            ws.send("k" + KEY_BACKSPACE);
         } else if (text.value.length > prevText.length) {
-            ws.send("t" + text.value.slice(prevText.length - text.value.length));
+            let newText = text.value.slice(prevText.length - text.value.length)
+            newText = newText.split(/\r?\n/g)
+            for (let i = 0; i < newText.length - 1; i++) {
+                if (newText[i].length > 0) {
+                    ws.send("t" + newText[i]);
+                }
+                ws.send("k" + KEY_ENTER);
+            }
+            if (newText[newText.length - 1].length > 0) {
+                ws.send("t" + newText[newText.length - 1]);
+            }
         }
         prevText = text.value;
     })

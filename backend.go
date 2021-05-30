@@ -39,6 +39,8 @@ const (
 	KeyBrowserBack
 	KeyBrowserForward
 	KeySuper
+	KeyEnter
+	KeyBackspace
 	KeyLimit
 )
 
